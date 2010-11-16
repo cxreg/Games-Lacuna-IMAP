@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Games::Lacuna::IMAP;
+
+my $server = Games::Lacuna::IMAP->new(
+    port        => 1430,
+    auth_class  => 'Games::Lacuna::IMAP::Auth',
+    model_class => 'Games::Lacuna::IMAP::Model',
+);
+$server->run;
