@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my $dir = './certs';
+
+# Create a new certificate and put it in $dir
+# need 'server-cert.pem' and 'server-key.pem'
+
+# Set up
+qx(mkdir -p ssl/private);
+qx(mkdir -p ssl/newcerts);
+qx(echo 1000 > ssl/serial);
+qx(touch ssl/index.txt);
+qx(mkdir -p certs);
+
+# Create CA
+print "--- Creating new CA\n";
+qx(openssl req -config ./openssl.cnf -new -x509 -days 3650 -extensions v3_ca -keyout ssl/private/cakey.pem -out ssl/cacert.pem);
+
+# Create request
+print "--- Creating request\n";
+qx(openssl req -config ./openssl.cnf -new -nodes -out certs/req.pem -keyout certs/server-key.pem);
+
+# Create cert
+print "--- Creating cert\n";
+qx(openssl ca -config ./openssl.cnf -out certs/server-cert.pem -infiles certs/req.pem);
