@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 use Games::Lacuna::IMAP;
+use Games::Lacuna::IMAP::Auth;
+use Games::Lacuna::IMAP::Model;
 
 my $server = Games::Lacuna::IMAP->new(
     port        => 1430,
