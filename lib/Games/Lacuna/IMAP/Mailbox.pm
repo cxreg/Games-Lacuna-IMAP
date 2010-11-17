@@ -1,6 +1,7 @@
 package Games::Lacuna::IMAP::Mailbox;
 
 use base 'Net::IMAP::Server::Mailbox';
+use Games::Lacuna::IMAP::Message;
 use aliased Games::Lacuna::IMAP::Conf;
 
 use DateTime::Format::Strptime;
@@ -32,17 +33,17 @@ sub load_data {
             $date = $self->HEADERDATE_PARSER->format_datetime($dt);
         }
 
-        # my $message_data = $inbox->read_message($message_summary->{id});
-        # my $body      = $message_data->{message}->{body};
-
-        my $msg = Net::IMAP::Server::Message->new(<<DATA);
+        # Create the message with no body; it will be loaded later
+        my $msg = Games::Lacuna::IMAP::Message->new(<<DATA);
 From: "$from" <$from_addr>
 To: "$to" <$to_addr>
 Subject: $subject
 Date: $date
 
-$body
 DATA
+
+        # Record the lacuna message id for further lookup later
+        $msg->msg_id($message_summary->{id});
 
         if ($message_summary->{has_read}) {
             $msg->set_flag('\\Seen', 1);
