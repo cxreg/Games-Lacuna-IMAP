@@ -5,13 +5,27 @@ use Games::Lacuna::Client;
 
 use Carp qw(croak);
 
-my $lacuna = Games::Lacuna::Client->new(
-    uri      => Conf->uri,
-    name     => Conf->name,
-    password => Conf->password,
-    api_key  => Conf->api_key,
-);
+sub new {
+    my $class = shift;
+    my %args = @_;
 
-sub client {
-    return $lacuna;
+    my $self = bless \%args, $class;
+    $self->{lacuna} = Games::Lacuna::Client->new(
+        uri      => Conf->uri,
+        api_key  => Conf->api_key,
+        name     => $self->{name},
+        password => $self->{password},
+    );
+    return $self;
 }
+
+sub DESTROY {}
+
+sub AUTOLOAD {
+    my $self = shift;
+    my $func = $AUTOLOAD;
+    $func =~ s/.*://;
+    $self->{lacuna}->$func(@_);
+}
+
+1;
